@@ -1,12 +1,14 @@
 import { Link, useLocation } from 'react-router-dom';
 import { WalletButton } from './WalletButton';
-import { Zap, BarChart3, Store, Menu, X } from 'lucide-react';
+import { Zap, BarChart3, Store, Menu, X, Sparkles, User } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const navLinks = [
   { to: '/', label: 'Marketplace', icon: Store },
   { to: '/dashboard', label: 'Dashboard', icon: BarChart3 },
+  { to: '/mint', label: 'Mint', icon: Sparkles },
+  { to: '/profile', label: 'Profile', icon: User },
 ];
 
 export const Navbar = () => {

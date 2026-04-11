@@ -7,7 +7,7 @@ import { PokemonCard } from '@/components/PokemonCard';
 import { pokemonNFTs } from '@/lib/pokemon-data';
 
 const rarityFilters = ['all', 'common', 'uncommon', 'rare', 'epic', 'legendary'] as const;
-const typeFilters = ['All', 'Fire', 'Water', 'Grass', 'Electric', 'Psychic', 'Dragon', 'Ghost', 'Fighting', 'Normal', 'Rock'] as const;
+const typeFilters = ['All', 'Fire', 'Water', 'Grass', 'Electric', 'Psychic', 'Dragon', 'Ghost', 'Fighting', 'Normal', 'Rock', 'Bug', 'Poison', 'Flying', 'Ice', 'Dark', 'Steel', 'Fairy'] as const;
 
 const Index = () => {
   const [search, setSearch] = useState('');
