@@ -1,5 +1,6 @@
 import { useWallet } from '@/hooks/useWallet';
-import { Wallet, LogOut, Copy, Check } from 'lucide-react';
+import { LogOut, Copy, Check } from 'lucide-react';
+import { MetaMaskIcon } from './MetaMaskIcon';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -65,7 +66,7 @@ export const WalletButton = () => {
       disabled={isConnecting}
       className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-primary text-primary-foreground font-medium text-sm hover:opacity-90 transition-all duration-300 shadow-neon-purple disabled:opacity-50"
     >
-      <Wallet className="w-4 h-4" />
+      <MetaMaskIcon className="w-5 h-5" />
       {isConnecting ? 'Connecting...' : 'Connect MetaMask'}
     </button>
   );
