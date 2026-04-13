@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Navbar } from '@/components/Navbar';
 import { useWallet } from '@/hooks/useWallet';
-import { Sparkles, Zap, Upload, Check, AlertCircle, Loader2, ChevronDown } from 'lucide-react';
+import { ParticleEffect } from '@/components/ParticleEffect';
+import { MetaMaskIcon } from '@/components/MetaMaskIcon';
+import { Sparkles, Zap, Check, AlertCircle, Loader2 } from 'lucide-react';
 
 const pokemonMintOptions = [
   { id: 10, name: "Caterpie", type: "Bug", rarity: "common", cost: 0.01 },
@@ -44,9 +46,7 @@ const Mint = () => {
 
   const confirmMint = () => {
     setStep('minting');
-    // Simulate minting
     setTimeout(() => {
-      const rarities = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
       const roll = Math.random();
       const rarity = roll < 0.02 ? 'legendary' : roll < 0.1 ? 'epic' : roll < 0.3 ? 'rare' : roll < 0.6 ? 'uncommon' : 'common';
       setMintedResult({ name: selectedPokemon!.name, id: selectedPokemon!.id, rarity });
@@ -67,7 +67,6 @@ const Mint = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <div className="pt-20 pb-12 container mx-auto px-4">
-        {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-4">
             <Sparkles className="w-4 h-4" /> Mint Your Pokémon NFT
@@ -81,20 +80,32 @@ const Mint = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {/* Left - Selection / Minting UI */}
           <div className="lg:col-span-2 space-y-6">
             <AnimatePresence mode="wait">
               {step === 'select' && (
                 <motion.div key="select" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  {!wallet.isConnected && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6 p-4 rounded-xl bg-card border border-primary/20 flex items-center gap-4">
+                      <MetaMaskIcon className="w-10 h-10" />
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-foreground">Connect your wallet to mint</p>
+                        <p className="text-xs text-muted-foreground">MetaMask required for minting</p>
+                      </div>
+                      <button onClick={connect} className="px-4 py-2 rounded-lg bg-gradient-primary text-primary-foreground text-sm font-medium shadow-neon-purple hover:opacity-90 transition-opacity flex items-center gap-2">
+                        <MetaMaskIcon className="w-4 h-4" /> Connect
+                      </button>
+                    </motion.div>
+                  )}
                   <h3 className="font-display font-semibold text-foreground mb-4">Choose a Pokémon to Mint</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {pokemonMintOptions.map((p) => (
                       <button
                         key={p.id}
                         onClick={() => setSelectedPokemon(p)}
-                        className={`bg-card border rounded-xl p-4 text-center transition-all hover:border-primary/50 ${
-                          selectedPokemon?.id === p.id ? 'border-primary shadow-neon-purple' : 'border-border'
+                        className={`bg-white/[0.04] border backdrop-blur-xl rounded-xl p-4 text-center transition-all hover:bg-white/[0.08] hover:border-primary/50 ${
+                          selectedPokemon?.id === p.id ? 'border-primary shadow-neon-purple bg-white/[0.08]' : 'border-white/[0.08]'
                         }`}
+                        style={{ boxShadow: selectedPokemon?.id === p.id ? undefined : 'inset 0 1px 1px rgba(255,255,255,0.06)' }}
                       >
                         <img src={img(p.id)} alt={p.name} className="w-16 h-16 mx-auto object-contain mb-2" loading="lazy" />
                         <p className="font-display font-semibold text-sm text-foreground">{p.name}</p>
@@ -125,10 +136,7 @@ const Mint = () => {
                         <span className="text-sm text-muted-foreground">Total Cost</span>
                         <span className="font-display font-bold text-xl text-foreground">{(selectedPokemon.cost * quantity).toFixed(2)} ETH</span>
                       </div>
-                      <button
-                        onClick={handleMint}
-                        className="w-full py-3 rounded-lg bg-gradient-primary text-primary-foreground font-display font-semibold hover:opacity-90 transition-opacity shadow-neon-purple flex items-center justify-center gap-2"
-                      >
+                      <button onClick={handleMint} className="w-full py-3 rounded-lg bg-gradient-primary text-primary-foreground font-display font-semibold hover:opacity-90 transition-opacity shadow-neon-purple flex items-center justify-center gap-2">
                         <Zap className="w-4 h-4" /> Proceed to Mint
                       </button>
                     </motion.div>
@@ -143,15 +151,10 @@ const Mint = () => {
                   <p className="text-muted-foreground text-sm mb-6">
                     You are about to mint {quantity}x <strong>{selectedPokemon.name}</strong> for{' '}
                     <strong>{(selectedPokemon.cost * quantity).toFixed(2)} ETH</strong>.
-                    The rarity will be randomly assigned.
                   </p>
                   <div className="flex gap-3 justify-center">
-                    <button onClick={() => setStep('select')} className="px-6 py-2.5 rounded-lg border border-border text-foreground font-medium text-sm hover:bg-secondary transition-colors">
-                      Cancel
-                    </button>
-                    <button onClick={confirmMint} className="px-6 py-2.5 rounded-lg bg-gradient-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity shadow-neon-purple">
-                      Confirm & Mint
-                    </button>
+                    <button onClick={() => setStep('select')} className="px-6 py-2.5 rounded-lg border border-border text-foreground font-medium text-sm hover:bg-secondary transition-colors">Cancel</button>
+                    <button onClick={confirmMint} className="px-6 py-2.5 rounded-lg bg-gradient-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity shadow-neon-purple">Confirm & Mint</button>
                   </div>
                 </motion.div>
               )}
@@ -164,47 +167,54 @@ const Mint = () => {
                   <div className="mt-6 space-y-2 text-xs text-muted-foreground">
                     <p>✓ Wallet connected</p>
                     <p>✓ Transaction submitted</p>
-                    <p className="animate-pulse-glow text-primary">⟳ Awaiting confirmation...</p>
+                    <p className="text-primary animate-pulse">⟳ Awaiting confirmation...</p>
                   </div>
                 </motion.div>
               )}
 
               {step === 'success' && mintedResult && (
-                <motion.div key="success" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-card border border-border rounded-xl p-8 text-center">
+                <motion.div key="success" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="relative bg-card border border-border rounded-xl p-8 text-center overflow-hidden">
+                  <ParticleEffect count={60} active={true} />
+                  
                   <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', delay: 0.2 }}>
-                    <div className="w-20 h-20 rounded-full bg-neon-green/20 flex items-center justify-center mx-auto mb-4">
+                    <div className="w-20 h-20 rounded-full bg-neon-green/20 flex items-center justify-center mx-auto mb-4 relative z-10">
                       <Check className="w-10 h-10 text-neon-green" />
                     </div>
                   </motion.div>
-                  <h3 className="font-display font-bold text-2xl text-foreground mb-2">Mint Successful!</h3>
-                  <p className="text-muted-foreground text-sm mb-6">Your Pokémon has been minted to your wallet.</p>
-                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-                    <img src={img(mintedResult.id)} alt={mintedResult.name} className="w-32 h-32 mx-auto object-contain mb-4 drop-shadow-2xl" />
+                  <h3 className="font-display font-bold text-2xl text-foreground mb-2 relative z-10">Mint Successful!</h3>
+                  <p className="text-muted-foreground text-sm mb-6 relative z-10">Your Pokémon has been minted to your wallet.</p>
+                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="relative z-10">
+                    <motion.img
+                      src={img(mintedResult.id)}
+                      alt={mintedResult.name}
+                      className="w-40 h-40 mx-auto object-contain mb-4 drop-shadow-2xl"
+                      animate={{ y: [0, -10, 0], rotate: [0, 2, -2, 0] }}
+                      transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                    />
                     <p className="font-display font-bold text-xl text-foreground">{mintedResult.name}</p>
-                    <p className={`text-sm font-semibold capitalize mt-1 ${
-                      mintedResult.rarity === 'legendary' ? 'text-neon-orange' :
-                      mintedResult.rarity === 'epic' ? 'text-neon-purple' :
-                      mintedResult.rarity === 'rare' ? 'text-neon-blue' :
-                      mintedResult.rarity === 'uncommon' ? 'text-neon-green' :
-                      'text-muted-foreground'
-                    }`}>
-                      {mintedResult.rarity} Rarity!
-                    </p>
+                    <motion.p
+                      initial={{ scale: 0 }}
+                      animate={{ scale: [0, 1.3, 1] }}
+                      transition={{ delay: 0.6, duration: 0.5 }}
+                      className={`text-lg font-bold capitalize mt-1 ${
+                        mintedResult.rarity === 'legendary' ? 'text-neon-orange' :
+                        mintedResult.rarity === 'epic' ? 'text-neon-purple' :
+                        mintedResult.rarity === 'rare' ? 'text-neon-blue' :
+                        mintedResult.rarity === 'uncommon' ? 'text-neon-green' :
+                        'text-muted-foreground'
+                      }`}>
+                      ✦ {mintedResult.rarity} Rarity! ✦
+                    </motion.p>
                   </motion.div>
-                  <div className="flex gap-3 justify-center mt-8">
-                    <button onClick={reset} className="px-6 py-2.5 rounded-lg border border-border text-foreground font-medium text-sm hover:bg-secondary transition-colors">
-                      Mint Another
-                    </button>
-                    <button onClick={() => window.location.href = '/profile'} className="px-6 py-2.5 rounded-lg bg-gradient-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity">
-                      View Collection
-                    </button>
+                  <div className="flex gap-3 justify-center mt-8 relative z-10">
+                    <button onClick={reset} className="px-6 py-2.5 rounded-lg border border-border text-foreground font-medium text-sm hover:bg-secondary transition-colors">Mint Another</button>
+                    <button onClick={() => window.location.href = '/profile'} className="px-6 py-2.5 rounded-lg bg-gradient-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity">View Collection</button>
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
 
-          {/* Right - Info Panel */}
           <div className="space-y-4">
             <div className="bg-card border border-border rounded-xl p-5">
               <h3 className="font-display font-semibold text-foreground mb-3">Minting Info</h3>
@@ -216,7 +226,6 @@ const Mint = () => {
                 <div className="flex justify-between"><span className="text-muted-foreground">Minted</span><span className="text-foreground">8,234</span></div>
                 <div className="flex justify-between"><span className="text-muted-foreground">Remaining</span><span className="text-neon-green font-semibold">1,766</span></div>
               </div>
-              {/* Progress */}
               <div className="mt-4">
                 <div className="flex justify-between text-xs mb-1">
                   <span className="text-muted-foreground">Mint Progress</span>
@@ -248,7 +257,7 @@ const Mint = () => {
                 <Sparkles className="w-4 h-4 text-primary" /> Smart Contract
               </h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Our ERC-721 smart contract is verified on Etherscan. Each NFT has unique on-chain metadata including rarity, traits, and provenance. Gas fees apply to all minting transactions.
+                Our ERC-721 smart contract is verified on Etherscan. Each NFT has unique on-chain metadata including rarity, traits, and provenance.
               </p>
             </div>
           </div>
