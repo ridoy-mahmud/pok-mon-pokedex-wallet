@@ -36,6 +36,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <HeroSection />
+      <SalesTicker />
 
       {/* Filters */}
       <section className="container mx-auto px-4 pb-20">
