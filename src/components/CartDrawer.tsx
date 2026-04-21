@@ -10,7 +10,8 @@ import { useWallet } from '@/hooks/useWallet';
 export const CartDrawer = () => {
   const { items, isOpen, setOpen, remove, clear, total } = useCart();
   const { push } = useNotifications();
-  const { address, isConnected } = useWallet();
+  const { wallet } = useWallet();
+  const { address, isConnected } = wallet;
 
   const checkout = async () => {
     if (!isConnected) { toast.error('Connect your wallet first'); return; }
