@@ -14,7 +14,210 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bids: {
+        Row: {
+          amount: number
+          bidder_wallet: string
+          created_at: string
+          id: string
+          nft_id: string
+        }
+        Insert: {
+          amount: number
+          bidder_wallet: string
+          created_at?: string
+          id?: string
+          nft_id: string
+        }
+        Update: {
+          amount?: number
+          bidder_wallet?: string
+          created_at?: string
+          id?: string
+          nft_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bids_nft_id_fkey"
+            columns: ["nft_id"]
+            isOneToOne: false
+            referencedRelation: "nfts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      likes: {
+        Row: {
+          created_at: string
+          id: string
+          nft_id: string
+          wallet_address: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nft_id: string
+          wallet_address: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nft_id?: string
+          wallet_address?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "likes_nft_id_fkey"
+            columns: ["nft_id"]
+            isOneToOne: false
+            referencedRelation: "nfts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nfts: {
+        Row: {
+          auction_end: string | null
+          category: string
+          collection_name: string | null
+          created_at: string
+          creator_wallet: string
+          currency: string
+          description: string | null
+          id: string
+          image_url: string
+          is_auction: boolean
+          likes_count: number
+          name: string
+          owner_wallet: string
+          pokemon_type: string | null
+          price: number
+          rarity: string
+          royalty_percent: number | null
+          traits: Json | null
+          updated_at: string
+          views_count: number
+        }
+        Insert: {
+          auction_end?: string | null
+          category?: string
+          collection_name?: string | null
+          created_at?: string
+          creator_wallet: string
+          currency?: string
+          description?: string | null
+          id?: string
+          image_url: string
+          is_auction?: boolean
+          likes_count?: number
+          name: string
+          owner_wallet: string
+          pokemon_type?: string | null
+          price?: number
+          rarity?: string
+          royalty_percent?: number | null
+          traits?: Json | null
+          updated_at?: string
+          views_count?: number
+        }
+        Update: {
+          auction_end?: string | null
+          category?: string
+          collection_name?: string | null
+          created_at?: string
+          creator_wallet?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          image_url?: string
+          is_auction?: boolean
+          likes_count?: number
+          name?: string
+          owner_wallet?: string
+          pokemon_type?: string | null
+          price?: number
+          rarity?: string
+          royalty_percent?: number | null
+          traits?: Json | null
+          updated_at?: string
+          views_count?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          id: string
+          updated_at: string
+          username: string | null
+          wallet_address: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          id?: string
+          updated_at?: string
+          username?: string | null
+          wallet_address: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          id?: string
+          updated_at?: string
+          username?: string | null
+          wallet_address?: string
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          buyer_wallet: string
+          created_at: string
+          id: string
+          nft_id: string
+          nft_image: string | null
+          nft_name: string
+          price: number
+          seller_wallet: string
+          tx_type: string
+        }
+        Insert: {
+          buyer_wallet: string
+          created_at?: string
+          id?: string
+          nft_id: string
+          nft_image?: string | null
+          nft_name: string
+          price: number
+          seller_wallet: string
+          tx_type?: string
+        }
+        Update: {
+          buyer_wallet?: string
+          created_at?: string
+          id?: string
+          nft_id?: string
+          nft_image?: string | null
+          nft_name?: string
+          price?: number
+          seller_wallet?: string
+          tx_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_nft_id_fkey"
+            columns: ["nft_id"]
+            isOneToOne: false
+            referencedRelation: "nfts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
