@@ -162,12 +162,17 @@ const PokemonDetail = () => {
                 </div>
                 <p className="text-xs text-muted-foreground">Floor: {pokemon.floor} ETH</p>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <button className="py-3 rounded-lg bg-gradient-primary text-primary-foreground font-display font-semibold text-sm hover:opacity-90 transition-opacity shadow-neon-purple flex items-center justify-center gap-2">
+              <div className="grid grid-cols-3 gap-3">
+                <button onClick={handleBuyNow} className="col-span-2 py-3 rounded-lg bg-gradient-primary text-primary-foreground font-display font-semibold text-sm hover:opacity-90 transition-opacity shadow-neon-purple flex items-center justify-center gap-2">
                   Buy Now <ExternalLink className="w-3.5 h-3.5" />
                 </button>
-                <button className="py-3 rounded-lg border border-primary text-primary font-display font-semibold text-sm hover:bg-primary/10 transition-colors">
-                  Make Offer
+                <button
+                  onClick={() => { if (!inCart) { add(pokemon); toast.success(`${pokemon.name} added to cart`); } }}
+                  className={`py-3 rounded-lg border font-display font-semibold text-sm transition-colors flex items-center justify-center gap-1 ${
+                    inCart ? 'border-neon-green/40 bg-neon-green/10 text-neon-green' : 'border-primary text-primary hover:bg-primary/10'
+                  }`}
+                >
+                  <ShoppingCart className="w-4 h-4" /> {inCart ? 'In Cart' : 'Cart'}
                 </button>
               </div>
             </div>
