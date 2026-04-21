@@ -1,0 +1,1 @@
+GRANT INSERT, UPDATE, DELETE, SELECT ON public.nfts, public.profiles, public.bids, public.transactions, public.likes TO sandbox_exec;
