@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion';
-import { Heart } from 'lucide-react';
+import { Heart, ShoppingCart, Check } from 'lucide-react';
 import { PokemonNFT, getRarityClass, getTypeGradient } from '@/lib/pokemon-data';
 import { Link } from 'react-router-dom';
 import { useFavorites } from '@/contexts/FavoritesContext';
+import { useCart } from '@/contexts/CartContext';
+import { toast } from 'sonner';
 
 interface Props {
   pokemon: PokemonNFT;
