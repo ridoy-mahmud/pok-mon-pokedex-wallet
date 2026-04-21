@@ -28,8 +28,17 @@ const typeGlow: Record<string, string> = {
 
 export const PokemonCard = ({ pokemon, index }: Props) => {
   const { toggleFavorite, isFavorite } = useFavorites();
+  const { add, has } = useCart();
   const liked = isFavorite(pokemon.id);
+  const inCart = has(pokemon.id);
   const glow = typeGlow[pokemon.type] || '';
+
+  const handleAddCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (inCart) return;
+    add(pokemon);
+    toast.success(`${pokemon.name} added to cart`);
+  };
 
   return (
     <motion.div
