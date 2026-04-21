@@ -1,11 +1,15 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Navbar } from '@/components/Navbar';
 import { pokemonNFTs, getTypeGradient, getRarityClass, generateBidHistory, generateTraits } from '@/lib/pokemon-data';
 import { useFavorites } from '@/contexts/FavoritesContext';
-import { ArrowLeft, Heart, Share2, ExternalLink, Clock, TrendingUp, Shield, Eye } from 'lucide-react';
+import { useCart } from '@/contexts/CartContext';
+import { ArrowLeft, Heart, Share2, ExternalLink, Clock, TrendingUp, Shield, Eye, ShoppingCart } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { supabase } from '@/integrations/supabase/client';
+import { useWallet } from '@/hooks/useWallet';
+import { toast } from 'sonner';
 
 const priceHistoryMock = [
   { date: 'W1', price: 0 }, { date: 'W2', price: 0 }, { date: 'W3', price: 0 },
@@ -26,6 +30,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 const PokemonDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { toggleFavorite, isFavorite } = useFavorites();
+  const { add, has } = useCart();
+  const { wallet } = useWallet();
+  const navigate = useNavigate();
   const [bidAmount, setBidAmount] = useState('');
   const [showBidSuccess, setShowBidSuccess] = useState(false);
 
@@ -44,6 +51,7 @@ const PokemonDetail = () => {
   }
 
   const liked = isFavorite(pokemon.id);
+  const inCart = has(pokemon.id);
   const bids = generateBidHistory(pokemon.price);
   const traits = generateTraits(pokemon);
   const priceData = priceHistoryMock.map((d, i) => ({
@@ -51,12 +59,36 @@ const PokemonDetail = () => {
     price: pokemon.floor * (0.6 + Math.random() * 0.5 + i * 0.05),
   }));
 
-  const handlePlaceBid = () => {
-    if (bidAmount && parseFloat(bidAmount) > 0) {
-      setShowBidSuccess(true);
-      setTimeout(() => setShowBidSuccess(false), 3000);
-      setBidAmount('');
-    }
+  const handlePlaceBid = async () => {
+    const amt = parseFloat(bidAmount);
+    if (!amt || amt <= 0) return;
+    if (!wallet.isConnected) { toast.error('Connect your wallet first'); return; }
+    const { error } = await supabase.from('bids').insert({
+      nft_id: crypto.randomUUID(),
+      bidder_wallet: wallet.address || '0xYou',
+      amount: amt,
+    });
+    if (error) { toast.error('Bid failed'); return; }
+    setShowBidSuccess(true);
+    toast.success(`Bid of ${amt} ETH placed on ${pokemon.name}`);
+    setTimeout(() => setShowBidSuccess(false), 3000);
+    setBidAmount('');
+  };
+
+  const handleBuyNow = async () => {
+    if (!wallet.isConnected) { toast.error('Connect your wallet first'); return; }
+    const { error } = await supabase.from('transactions').insert({
+      nft_id: crypto.randomUUID(),
+      nft_name: pokemon.name,
+      nft_image: pokemon.image,
+      price: pokemon.price,
+      seller_wallet: pokemon.owner,
+      buyer_wallet: wallet.address || '0xYou',
+      tx_type: 'sale',
+    });
+    if (error) { toast.error('Purchase failed'); return; }
+    toast.success(`You bought ${pokemon.name} for ${pokemon.price} ETH!`);
+    setTimeout(() => navigate('/profile'), 1200);
   };
 
   return (
@@ -130,12 +162,17 @@ const PokemonDetail = () => {
                 </div>
                 <p className="text-xs text-muted-foreground">Floor: {pokemon.floor} ETH</p>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <button className="py-3 rounded-lg bg-gradient-primary text-primary-foreground font-display font-semibold text-sm hover:opacity-90 transition-opacity shadow-neon-purple flex items-center justify-center gap-2">
+              <div className="grid grid-cols-3 gap-3">
+                <button onClick={handleBuyNow} className="col-span-2 py-3 rounded-lg bg-gradient-primary text-primary-foreground font-display font-semibold text-sm hover:opacity-90 transition-opacity shadow-neon-purple flex items-center justify-center gap-2">
                   Buy Now <ExternalLink className="w-3.5 h-3.5" />
                 </button>
-                <button className="py-3 rounded-lg border border-primary text-primary font-display font-semibold text-sm hover:bg-primary/10 transition-colors">
-                  Make Offer
+                <button
+                  onClick={() => { if (!inCart) { add(pokemon); toast.success(`${pokemon.name} added to cart`); } }}
+                  className={`py-3 rounded-lg border font-display font-semibold text-sm transition-colors flex items-center justify-center gap-1 ${
+                    inCart ? 'border-neon-green/40 bg-neon-green/10 text-neon-green' : 'border-primary text-primary hover:bg-primary/10'
+                  }`}
+                >
+                  <ShoppingCart className="w-4 h-4" /> {inCart ? 'In Cart' : 'Cart'}
                 </button>
               </div>
             </div>

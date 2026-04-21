@@ -4,6 +4,7 @@ import { Search, SlidersHorizontal, Grid3X3, LayoutGrid } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { HeroSection } from '@/components/HeroSection';
 import { PokemonCard } from '@/components/PokemonCard';
+import { SalesTicker } from '@/components/SalesTicker';
 import { pokemonNFTs } from '@/lib/pokemon-data';
 
 const rarityFilters = ['all', 'common', 'uncommon', 'rare', 'epic', 'legendary'] as const;
@@ -35,6 +36,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <HeroSection />
+      <SalesTicker />
 
       {/* Filters */}
       <section className="container mx-auto px-4 pb-20">
