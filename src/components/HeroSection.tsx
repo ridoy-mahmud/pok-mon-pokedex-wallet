@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Sparkles, TrendingUp, Users } from 'lucide-react';
+import { ParticleBackground } from './ParticleBackground';
 
 const stats = [
   { label: 'Total Volume', value: '12,450 ETH', icon: TrendingUp },
@@ -10,8 +11,8 @@ const stats = [
 export const HeroSection = () => {
   return (
     <section className="relative pt-32 pb-20 overflow-hidden">
-      {/* Background effects */}
-      <div className="absolute inset-0 overflow-hidden">
+      <ParticleBackground />
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-neon-cyan/10 rounded-full blur-[120px]" />
       </div>
