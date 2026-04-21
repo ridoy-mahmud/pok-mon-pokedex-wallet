@@ -108,12 +108,25 @@ export const PokemonCard = ({ pokemon, index }: Props) => {
             <Heart className={`w-3.5 h-3.5 transition-all duration-300 ${liked ? 'fill-neon-pink text-neon-pink scale-110' : ''}`} />
             {pokemon.likes + (liked ? 1 : 0)}
           </button>
-          <Link
-            to={`/pokemon/${pokemon.id}`}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/[0.08] border border-white/[0.1] backdrop-blur-sm text-foreground text-xs font-medium hover:bg-white/[0.15] transition-all"
-          >
-            View Details
-          </Link>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={handleAddCart}
+              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-all ${
+                inCart
+                  ? 'bg-neon-green/15 border-neon-green/30 text-neon-green'
+                  : 'bg-white/[0.08] border-white/[0.1] text-foreground hover:bg-white/[0.15]'
+              }`}
+              aria-label="Add to cart"
+            >
+              {inCart ? <Check className="w-3.5 h-3.5" /> : <ShoppingCart className="w-3.5 h-3.5" />}
+            </button>
+            <Link
+              to={`/pokemon/${pokemon.id}`}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/[0.08] border border-white/[0.1] backdrop-blur-sm text-foreground text-xs font-medium hover:bg-white/[0.15] transition-all"
+            >
+              View
+            </Link>
+          </div>
         </div>
       </div>
     </motion.div>
